@@ -867,7 +867,8 @@ public class CodeGameController : MonoBehaviour
         result = Regex.Replace(result, @"\b\d+\.?\d*\b", m => $"<color={numberColor}>{m.Value}</color>");
         
         // Built-in functions (Remember To add a new build in fucntion here)
-        result = Regex.Replace(result, @"\b(print|len|str|int|float|bool|list|dict)\b", 
+        // result = Regex.Replace(result, @"\b(print|len|str|int|float|bool|list|dict)\b", 
+        result = Regex.Replace(result, @"\b(nothing)\b",
             m => $"<color={builtinColor}>{m.Value}</color>");
         
         // Registered commands
