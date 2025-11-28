@@ -80,5 +80,13 @@ public class GridMover : MonoBehaviour
             yield return null;
         }
         player.position = targetPos;
+
+        // Update player direction in PlayerManager
+        if(PlayerManager.Instance != null)
+        {
+            PlayerManager.Instance.playerDirection = direction;  
+            Debug.Log($"Player direction updated to: {direction}"); 
+        }
+        // Movement complete
     }
 }
