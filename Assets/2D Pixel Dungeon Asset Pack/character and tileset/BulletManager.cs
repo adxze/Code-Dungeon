@@ -1,0 +1,31 @@
+using System.Collections;
+using UnityEngine;
+
+// Temporary Firing code, this thing does not regard a grid movement, has physic ect
+public class BulletManager : MonoBehaviour
+{
+    [Tooltip("Prefab instantiated when Fire() is invoked.")]
+    public GameObject bulletPrefab;
+    [Tooltip("Speed at which bullets travel (units per second).")]
+    public float bulletSpeed = 5f;
+    [Tooltip("Optional transform used as the spawn location.  If null the player's position should be passed when calling Fire().")]
+    public Transform fireOrigin;
+
+    public IEnumerator Fire(Vector3? origin = null, CodeGameController controller = null)
+    {
+        if (bulletPrefab == null)
+        {
+            controller?.AddFeedback("Fire() ignored: no bullet prefab assigned.");
+            yield break;
+        }
+        Vector3 spawnPos = origin ?? fireOrigin?.position ?? Vector3.zero;
+        GameObject bullet = Instantiate(bulletPrefab, spawnPos, Quaternion.identity);
+        Rigidbody2D rb2d = bullet.GetComponent<Rigidbody2D>();
+        if (rb2d != null)
+        {
+            rb2d.linearVelocity = Vector2.up * bulletSpeed;
+        }
+  
+        yield break;
+    }
+}
