@@ -23,7 +23,14 @@ public class BulletManager : MonoBehaviour
         Rigidbody2D rb2d = bullet.GetComponent<Rigidbody2D>();
         if (rb2d != null)
         {
-            rb2d.linearVelocity = Vector2.up * bulletSpeed;
+            if(PlayerManager.Instance.GetDirection() == (GridMover.Direction.Up))
+                rb2d.linearVelocity = Vector2.up * bulletSpeed;
+            else if(PlayerManager.Instance.GetDirection() == (GridMover.Direction.Left))
+                rb2d.linearVelocity = Vector2.left * bulletSpeed;
+            else if(PlayerManager.Instance.GetDirection() == (GridMover.Direction.Right))
+                rb2d.linearVelocity = Vector2.right * bulletSpeed;
+            else if(PlayerManager.Instance.GetDirection() == (GridMover.Direction.Down))
+                rb2d.linearVelocity = Vector2.down * bulletSpeed;
         }
   
         yield break;
