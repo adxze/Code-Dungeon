@@ -1,5 +1,4 @@
 using System;
-using Mono.Cecil.Cil;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,6 +15,8 @@ public class DisableButton : MonoBehaviour
 
     public void Update()
     {
+        if (code == null) return;
+
         if (code.IsRunning && !isDisabled)
         {
             ButtonOff();
