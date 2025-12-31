@@ -3,6 +3,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
+    private bool isGameOver;
 
     private void Awake()
     {
@@ -19,6 +20,14 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         Debug.Log("Game Manager initialized");
+    }
+
+    public bool IsGameOver => isGameOver;
+
+    public void SetGameOver()
+    {
+        if (isGameOver) return;
+        isGameOver = true;
     }
 
     public void PauseGame()

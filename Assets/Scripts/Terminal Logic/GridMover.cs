@@ -53,6 +53,12 @@ public class GridMover : MonoBehaviour
     /// null if you don’t want feedback messages.</param>
     public IEnumerator Move(Direction direction, CodeGameController controller = null)
     {
+        if (GameManager.Instance != null && GameManager.Instance.IsGameOver)
+        {
+            controller?.AddFeedback("Movement blocked: game finished.");
+            yield break;
+        }
+
         if (tilemap == null || player == null)
         {
             controller?.AddFeedback("GridMover: missing tilemap or player reference.");

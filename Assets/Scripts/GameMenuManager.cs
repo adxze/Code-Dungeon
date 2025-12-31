@@ -24,6 +24,9 @@ public class GameMenuManager : MonoBehaviour
     public InputActionReference openMenuAction;
     public InputActionReference openTerminalAction;
 
+    private System.Action<InputAction.CallbackContext> menuPerformedHandler;
+    private System.Action<InputAction.CallbackContext> terminalPerformedHandler;
+
     private void Awake()
     {
         menuGroup = mainMenu.GetComponent<CanvasGroup>();
@@ -40,18 +43,39 @@ public class GameMenuManager : MonoBehaviour
         terminalUI.SetActive(false);
         menuGroup.alpha = 0;
         terminalGroup.alpha = 0;
+
+        menuPerformedHandler = _ => ToggleMenu();
+        terminalPerformedHandler = _ => ToggleTerminal();
     }
 
     private void OnEnable()
     {
-        openMenuAction.action.performed += _ => ToggleMenu();
-        openTerminalAction.action.performed += _ => ToggleTerminal();
+        if (openMenuAction != null)
+        {
+            openMenuAction.action.performed += menuPerformedHandler;
+        }
+        if (openTerminalAction != null)
+        {
+            openTerminalAction.action.performed += terminalPerformedHandler;
+        }
     }
 
     private void OnDisable()
     {
-        openMenuAction.action.performed -= _ => ToggleMenu();
-        openTerminalAction.action.performed -= _ => ToggleTerminal();
+        if (openMenuAction != null)
+        {
+            openMenuAction.action.performed -= menuPerformedHandler;
+        }
+        if (openTerminalAction != null)
+        {
+            openTerminalAction.action.performed -= terminalPerformedHandler;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        // Ensure callbacks are removed even if OnDisable is skipped.
+        OnDisable();
     }
 
     private void ToggleMenu()
@@ -82,6 +106,17 @@ public class GameMenuManager : MonoBehaviour
             else
                 StartCoroutine(SlideOut(terminalGroup, terminalRect, terminalUI, terminalStartPos));
         }
+    }
+
+    public void ForceCloseTerminal()
+    {
+        if (!terminalUI.activeSelf)
+        {
+            return;
+        }
+
+        StopAllCoroutines();
+        StartCoroutine(SlideOut(terminalGroup, terminalRect, terminalUI, terminalStartPos));
     }
 
     private IEnumerator SwitchUI(CanvasGroup fromGroup, RectTransform fromRect, GameObject fromGO,

@@ -31,6 +31,7 @@ public class CodeGameController : MonoBehaviour
     private readonly List<string> feedback = new();
     private bool isRunning;
     private int currentLine = 0; // For error reporting
+    
 
     // Statement base class
     private abstract class Statement
@@ -195,6 +196,20 @@ public class CodeGameController : MonoBehaviour
     {
         if (isRunning) return;
 
+        if (GameManager.Instance != null && GameManager.Instance.IsGameOver)
+        {
+            if (feedbackText != null)
+            {
+                feedbackText.text = "Game finished. Commands are disabled.";
+            }
+            return;
+        }
+
+        if (RunLimitManager.Instance != null && !RunLimitManager.Instance.TryRegisterRun())
+        {
+            return;
+        }
+        
         variables.Clear();
         feedback.Clear();
         currentLine = 0;
@@ -817,12 +832,20 @@ public class CodeGameController : MonoBehaviour
 
         foreach (var stmt in statements)
         {
+            if (GameManager.Instance != null && GameManager.Instance.IsGameOver)
+            {
+                isRunning = false;
+                RunLimitManager.Instance?.RunCompleted();
+                yield break;
+            }
+
             currentLine = stmt.lineNumber;
             yield return StartCoroutine(stmt.Execute(this));
             yield return new WaitForSeconds(commandDelay);
         }
 
         isRunning = false;
+        RunLimitManager.Instance?.RunCompleted();
 
         if (feedbackText != null)
         {
@@ -884,4 +907,23 @@ public class CodeGameController : MonoBehaviour
 
         return result;
     }
+    
+    // Getter 
+    public bool IsRunning
+    {
+        get { return isRunning; }
+    }
+
+    public void AbortExecutionOnWin()
+    {
+        StopAllCoroutines();
+        isRunning = false;
+        variables.Clear();
+        feedback.Clear();
+        if (feedbackText != null)
+        {
+            feedbackText.text = "Game finished. Commands are disabled.";
+        }
+    }
+
 }

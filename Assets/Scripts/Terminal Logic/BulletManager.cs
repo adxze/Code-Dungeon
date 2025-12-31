@@ -13,6 +13,12 @@ public class BulletManager : MonoBehaviour
 
     public IEnumerator Fire(Vector3? origin = null, CodeGameController controller = null)
     {
+        if (GameManager.Instance != null && GameManager.Instance.IsGameOver)
+        {
+            controller?.AddFeedback("Fire() ignored: game finished.");
+            yield break;
+        }
+
         if (bulletPrefab == null)
         {
             controller?.AddFeedback("Fire() ignored: no bullet prefab assigned.");

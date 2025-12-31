@@ -41,6 +41,12 @@ public class GameCommandRegistrar : MonoBehaviour
     /// </summary>
     private IEnumerator MoveCommand(string[] args)
     {
+        if (GameManager.Instance != null && GameManager.Instance.IsGameOver)
+        {
+            controller?.AddFeedback("Move() ignored: game finished.");
+            yield break;
+        }
+
         if (gridMover == null)
         {
             controller.AddFeedback("Move(): no GridMover assigned.");
@@ -72,6 +78,12 @@ public class GameCommandRegistrar : MonoBehaviour
     /// </summary>
     private IEnumerator FireCommand(string[] args)
     {
+        if (GameManager.Instance != null && GameManager.Instance.IsGameOver)
+        {
+            controller?.AddFeedback("Fire() ignored: game finished.");
+            yield break;
+        }
+
         if (bulletManager == null)
         {
             controller.AddFeedback("Fire(): no BulletManager assigned.");
